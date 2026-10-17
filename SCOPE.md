@@ -115,3 +115,9 @@ Scoring: Impact 30%, Demo 25% (incl. video quality), Use of Meta AI tooling 25%,
 - Build: movie/{script,common,cards,dash,build,world,render}.py; 3D from Blender 4.5.14 Cycles on the isac-sim L4 (frames rendered 2026-10-17); GPU box STOPPED at the end; gpu_up.sh / gpu_stage2.sh / gpu_export.sh exist.
 - Known flaws: dashboard text on the control-room monitors is mirrored in the s6 shots (texture UV flip; fix = flip movie/screens/*.png and re-render cuts s6c1-s6c3 on the GPU); drone enlarged x7 (stated on the end card); no public rule on hackathon video length was found, judge cut length is my choice.
 - Not done: videos not posted anywhere; not hosted on the demo page as a fallback recording.
+
+## Phase 5 update (2026-10-17, v2 of the films)
+- Feedback applied: no double captions (SRT renamed so players do not auto-load it next to the burned-in version; dashboard footnotes hidden in cutaways; callouts now collision-aware; opening title kept clear), plus engineering-proof segments: sequence diagram, workflow diagram, config snapshots, code snapshots (policy engine, audit chain, detector), repo/commit card with real git log and selftest result.
+- Repo: private GitHub repo YuvarajAravindan-AI-Agent/6g-isac-facility-guard, 7 commits on main (latest b1c0058 at video time), repo-local git identity (not the IITM one). Pushed over HTTPS via gh credentials; SSH key is not linked to that account.
+- Cuts: out/6g-isac-judge.mp4 (6:26), out/6g-isac-long.mp4 (8:58, under LinkedIn's 10 min). Long cut dropped l1, l4, l8, l10, l11 to make room. Not posted anywhere.
+- GPU box stayed stopped for this round (CPU-only rework).
