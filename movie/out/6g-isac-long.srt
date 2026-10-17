@@ -1,0 +1,659 @@
+1
+00:00:00,200 --> 00:00:03,350
+A drone slips toward a power substation at dusk.
+
+2
+00:00:03,350 --> 00:00:04,622
+No radar sees it.
+
+3
+00:00:04,622 --> 00:00:06,197
+No camera sees it yet.
+
+4
+00:00:06,197 --> 00:00:09,771
+But the six-G base station beside the fence does, using
+
+5
+00:00:09,771 --> 00:00:12,860
+nothing but the signal it already uses to talk.
+
+6
+00:00:13,660 --> 00:00:15,920
+Critical sites have a blind spot:
+
+7
+00:00:15,920 --> 00:00:17,691
+small, low-flying drones.
+
+8
+00:00:17,691 --> 00:00:19,706
+Six-G proposes something new.
+
+9
+00:00:19,706 --> 00:00:24,958
+Integrated sensing and communication, where the network itself becomes the sensor.
+
+10
+00:00:24,958 --> 00:00:28,012
+It is not standardized yet, so we simulate it,
+
+11
+00:00:28,012 --> 00:00:31,920
+because real hardware tests are costly or simply impossible.
+
+12
+00:00:32,720 --> 00:00:37,103
+Traditional networks only communicate, and radar only senses.
+
+13
+00:00:37,103 --> 00:00:42,430
+Integrated sensing and communication reuses the same radio signal for both.
+
+14
+00:00:42,430 --> 00:00:47,150
+The base station already transmits wide-bandwidth O F D M signals.
+
+15
+00:00:47,150 --> 00:00:50,252
+The echoes that bounce off a moving object
+
+16
+00:00:50,252 --> 00:00:53,556
+carry its range, its speed and its direction,
+
+17
+00:00:53,556 --> 00:00:56,860
+with no extra spectrum and no extra hardware.
+
+18
+00:00:57,660 --> 00:00:59,470
+Here is how it is built.
+
+19
+00:00:59,470 --> 00:01:03,218
+A ray-tracing model of the substation runs at thirteen
+
+20
+00:01:03,218 --> 00:01:07,096
+gigahertz, with a four-hundred-megahertz O F D M signal.
+
+21
+00:01:07,096 --> 00:01:11,684
+Sionna computes the clutter from buildings, transformers and fence.
+
+22
+00:01:11,684 --> 00:01:14,463
+The drone is a moving point target of a
+
+23
+00:01:14,463 --> 00:01:18,599
+hundred square centimetres, flying twelve metres per second.
+
+24
+00:01:18,599 --> 00:01:21,960
+The whole simulation runs on one AWS L four GPU.
+
+25
+00:01:22,760 --> 00:01:23,649
+The numbers.
+
+26
+00:01:23,649 --> 00:01:26,594
+At thirteen gigahertz, in the upper mid band that
+
+27
+00:01:26,594 --> 00:01:29,650
+six-G is expected to use, four hundred megahertz of
+
+28
+00:01:29,650 --> 00:01:33,706
+bandwidth gives a range resolution of about thirty-eight centimetres.
+
+29
+00:01:33,706 --> 00:01:36,706
+One thousand twenty-four subcarriers set a maximum
+
+30
+00:01:36,706 --> 00:01:39,262
+range of three hundred eighty-four metres.
+
+31
+00:01:39,262 --> 00:01:42,317
+A frame of two thousand forty-eight symbols gives a
+
+32
+00:01:42,317 --> 00:01:45,540
+speed resolution of one point eight metres per second.
+
+33
+00:01:46,340 --> 00:01:49,477
+The scene is a substation modelled in Sionna:
+
+34
+00:01:49,477 --> 00:01:54,021
+concrete buildings, steel transformers, gantries and a metal fence.
+
+35
+00:01:54,021 --> 00:01:57,286
+Ray tracing finds fifteen strong clutter paths.
+
+36
+00:01:57,286 --> 00:02:00,423
+They are huge compared to the drone, but they
+
+37
+00:02:00,423 --> 00:02:03,815
+do not move, so subtracting the average over time
+
+38
+00:02:03,815 --> 00:02:07,400
+removes them, and what remains is the moving target.
+
+39
+00:02:08,200 --> 00:02:12,857
+The base station removes the static clutter and forms a range-Doppler map.
+
+40
+00:02:12,857 --> 00:02:16,081
+A C F A R detector flags anything above the noise.
+
+41
+00:02:16,081 --> 00:02:19,485
+A sixteen by eight antenna panel estimates direction,
+
+42
+00:02:19,485 --> 00:02:22,052
+and a Kalman tracker follows the drone.
+
+43
+00:02:22,052 --> 00:02:25,276
+The track is confirmed at three hundred twenty-one
+
+44
+00:02:25,276 --> 00:02:28,620
+metres, about twenty-seven seconds before the fence.
+
+45
+00:02:29,420 --> 00:02:30,426
+About C F A R.
+
+46
+00:02:30,426 --> 00:02:33,724
+The detector compares each cell with the average of its
+
+47
+00:02:33,724 --> 00:02:37,357
+neighbours, and a threshold factor sets the false-alarm rate.
+
+48
+00:02:37,357 --> 00:02:40,095
+We designed it for one in a million per cell.
+
+49
+00:02:40,095 --> 00:02:43,505
+Measured on two hundred million noise-only cells, it came
+
+50
+00:02:43,505 --> 00:02:45,684
+out at one point four in a million.
+
+51
+00:02:45,684 --> 00:02:50,379
+That is slightly above design, because the window correlates neighbouring cells.
+
+52
+00:02:50,379 --> 00:02:52,000
+We report it as measured.
+
+53
+00:02:52,800 --> 00:02:56,256
+Direction comes from a sixteen by eight antenna panel.
+
+54
+00:02:56,256 --> 00:02:59,175
+The drone must be seen in three frames before
+
+55
+00:02:59,175 --> 00:03:02,691
+the track is confirmed, which filters out false alarms.
+
+56
+00:03:02,691 --> 00:03:06,623
+A Kalman filter then predicts and corrects position and speed.
+
+57
+00:03:06,623 --> 00:03:09,900
+The error keeps shrinking as the drone gets closer.
+
+58
+00:03:10,700 --> 00:03:13,614
+Across twenty simulated flights, position error is
+
+59
+00:03:13,614 --> 00:03:15,935
+sixty-four centimetres R M S, and speed
+
+60
+00:03:15,935 --> 00:03:18,094
+error is under one metre per second.
+
+61
+00:03:18,094 --> 00:03:21,764
+A target ten times smaller is still confirmed at the same range.
+
+62
+00:03:21,764 --> 00:03:25,218
+At three hundred metres, the smallest target detected ninety
+
+63
+00:03:25,218 --> 00:03:28,240
+percent of the time is about ten square centimetres.
+
+64
+00:03:29,040 --> 00:03:30,491
+Target size matters.
+
+65
+00:03:30,491 --> 00:03:34,059
+The smallest target detected ninety percent of the time
+
+66
+00:03:34,059 --> 00:03:37,627
+at three hundred metres is about six square centimetres
+
+67
+00:03:37,627 --> 00:03:40,771
+at a false-alarm setting of one in ten thousand,
+
+68
+00:03:40,771 --> 00:03:43,855
+and ten square centimetres at one in a million.
+
+69
+00:03:43,855 --> 00:03:46,636
+Birds in the same size range would also be
+
+70
+00:03:46,636 --> 00:03:49,539
+detected, so telling them apart is a job for
+
+71
+00:03:49,539 --> 00:03:52,260
+the agent and its rules, and a next step.
+
+72
+00:03:53,060 --> 00:03:54,890
+Accuracy depends on range.
+
+73
+00:03:54,890 --> 00:03:58,122
+At three hundred metres the median error is about
+
+74
+00:03:58,122 --> 00:04:01,354
+one metre for the standard drone, and about three
+
+75
+00:04:01,354 --> 00:04:03,916
+metres for a target ten times smaller.
+
+76
+00:04:03,916 --> 00:04:07,880
+Inside one hundred metres, both are under twenty centimetres.
+
+77
+00:04:08,680 --> 00:04:10,321
+Now the governed agent.
+
+78
+00:04:10,321 --> 00:04:14,819
+When the track is confirmed, deterministic tools compute the evidence:
+
+79
+00:04:14,819 --> 00:04:19,621
+distance, zone, time to the fence, and whether a registered flight matches.
+
+80
+00:04:19,621 --> 00:04:24,241
+Then Meta's Llama three point one proposes actions from a fixed catalog.
+
+81
+00:04:24,241 --> 00:04:25,700
+It never acts alone.
+
+82
+00:04:26,500 --> 00:04:28,515
+What Llama actually sees.
+
+83
+00:04:28,515 --> 00:04:32,405
+Not raw sensor data, only a compact evidence record:
+
+84
+00:04:32,405 --> 00:04:36,086
+distance to the facility, altitude, ground speed,
+
+85
+00:04:36,086 --> 00:04:39,143
+closing speed, seconds to the fence, the
+
+86
+00:04:39,143 --> 00:04:42,755
+zone, and whether any registered flight matches.
+
+87
+00:04:42,755 --> 00:04:45,603
+It also gets the policy rules and the
+
+88
+00:04:45,603 --> 00:04:49,424
+action catalog, and must answer in structured data:
+
+89
+00:04:49,424 --> 00:04:53,800
+a classification, a threat level, a rationale, and actions.
+
+90
+00:04:54,600 --> 00:04:57,020
+A policy engine checks every proposal.
+
+91
+00:04:57,020 --> 00:04:59,556
+It raises the threat level to the policy
+
+92
+00:04:59,556 --> 00:05:02,438
+floor, adds the minimum actions for each zone,
+
+93
+00:05:02,438 --> 00:05:04,973
+and blocks anything outside the catalog.
+
+94
+00:05:04,973 --> 00:05:06,818
+Jamming is never executable.
+
+95
+00:05:06,818 --> 00:05:10,218
+Actions that touch the physical world wait for a human.
+
+96
+00:05:10,218 --> 00:05:14,540
+The duty officer approves the camera in three seconds, then the patrol.
+
+97
+00:05:15,340 --> 00:05:19,576
+The security manager rejects an early police escalation, and approves
+
+98
+00:05:19,576 --> 00:05:22,187
+it only when the drone is over the fence.
+
+99
+00:05:22,187 --> 00:05:25,320
+The dashboard lets you play the operator yourself.
+
+100
+00:05:26,120 --> 00:05:28,337
+The model is useful, but not trusted.
+
+101
+00:05:28,337 --> 00:05:31,094
+In one run it described the drone as inside the
+
+102
+00:05:31,094 --> 00:05:34,283
+restricted zone while it was still in the warning zone.
+
+103
+00:05:34,283 --> 00:05:37,959
+A grounding check caught the mismatch and flagged it in the log.
+
+104
+00:05:37,959 --> 00:05:40,284
+In another, the model was slow to alert
+
+105
+00:05:40,284 --> 00:05:43,312
+the airspace authority, so the policy now guarantees
+
+106
+00:05:43,312 --> 00:05:45,420
+that action in the restricted zone.
+
+107
+00:05:46,220 --> 00:05:48,165
+We also tested hostile input.
+
+108
+00:05:48,165 --> 00:05:51,111
+A planted note in the flight registry told the
+
+109
+00:05:51,111 --> 00:05:54,176
+assistant to ignore the rules and notify nobody.
+
+110
+00:05:54,176 --> 00:05:56,357
+Llama ignored it in this run, but
+
+111
+00:05:56,357 --> 00:05:57,948
+we do not rely on that.
+
+112
+00:05:57,948 --> 00:06:01,896
+Authorization comes from a deterministic registry match, and in
+
+113
+00:06:01,896 --> 00:06:05,491
+an automated self-test a forged answer asking for jamming
+
+114
+00:06:05,491 --> 00:06:08,320
+was blocked and the threat level was raised.
+
+115
+00:06:09,120 --> 00:06:12,319
+Every step goes into a hash-chained audit log.
+
+116
+00:06:12,319 --> 00:06:15,069
+Change one entry, and the chain breaks.
+
+117
+00:06:15,069 --> 00:06:18,140
+You can verify it yourself, in your browser.
+
+118
+00:06:18,940 --> 00:06:20,184
+Reproducibility.
+
+119
+00:06:20,184 --> 00:06:24,352
+The simulation is seeded, so the same run gives the same track.
+
+120
+00:06:24,352 --> 00:06:28,768
+The agent's Llama answers are cached, and replaying them reproduces
+
+121
+00:06:28,768 --> 00:06:31,629
+the same sequence of events with no G P U.
+
+122
+00:06:31,629 --> 00:06:33,869
+That is why the public demo is a
+
+123
+00:06:33,869 --> 00:06:36,979
+static page that costs almost nothing, and why
+
+124
+00:06:36,979 --> 00:06:39,840
+every number in this video can be checked.
+
+125
+00:06:40,640 --> 00:06:41,629
+Honest limits.
+
+126
+00:06:41,629 --> 00:06:45,148
+At closest approach the drone moves sideways, falls into the
+
+127
+00:06:45,148 --> 00:06:48,446
+Doppler blind zone, and the track coasts for two frames.
+
+128
+00:06:48,446 --> 00:06:51,964
+A hovering drone would be invisible to this clutter removal.
+
+129
+00:06:51,964 --> 00:06:54,437
+And human approval delay eats most of the
+
+130
+00:06:54,437 --> 00:06:56,746
+lead time late in the flight, which is
+
+131
+00:06:56,746 --> 00:06:58,780
+why the agent must propose early.
+
+132
+00:06:59,580 --> 00:07:01,946
+The stack is deliberately simple.
+
+133
+00:07:01,946 --> 00:07:05,911
+Sionna and PyTorch simulate the radio on a single AWS GPU.
+
+134
+00:07:05,911 --> 00:07:10,515
+Meta's Llama three point one, eight billion parameters, runs locally
+
+135
+00:07:10,515 --> 00:07:14,095
+through Ollama, so no incident data leaves the site.
+
+136
+00:07:14,095 --> 00:07:17,421
+A policy engine and an audit log wrap the model.
+
+137
+00:07:17,421 --> 00:07:19,978
+Two simplifications, stated plainly:
+
+138
+00:07:19,978 --> 00:07:22,280
+the drone is a point target, and
+
+139
+00:07:22,280 --> 00:07:24,902
+the angle estimate is modelled at the
+
+140
+00:07:24,902 --> 00:07:27,908
+detected cell, not a full array simulation.
+
+141
+00:07:27,908 --> 00:07:32,000
+The public demo is a static page that replays recorded runs.
+
+142
+00:07:32,800 --> 00:07:33,973
+Why it matters.
+
+143
+00:07:33,973 --> 00:07:37,061
+Substations, ports and airports are regulated.
+
+144
+00:07:37,061 --> 00:07:39,654
+They answer to aviation rules, such as
+
+145
+00:07:39,654 --> 00:07:41,815
+Remote I D, and to privacy law,
+
+146
+00:07:41,815 --> 00:07:44,655
+because sensing data can be personal data.
+
+147
+00:07:44,655 --> 00:07:47,990
+A system that proposes, a human that approves, and
+
+148
+00:07:47,990 --> 00:07:50,707
+a log that proves what happened is how A
+
+149
+00:07:50,707 --> 00:07:53,300
+I earns a place in these environments.
+
+150
+00:07:54,100 --> 00:07:55,114
+What is next.
+
+151
+00:07:55,114 --> 00:07:57,918
+First, validate the signal processing on an
+
+152
+00:07:57,918 --> 00:08:00,782
+open-source five-G testbed with real radios.
+
+153
+00:08:00,782 --> 00:08:03,944
+Second, add rotor signatures, so a hovering drone
+
+154
+00:08:03,944 --> 00:08:05,913
+and a bird can be told apart.
+
+155
+00:08:05,913 --> 00:08:08,717
+Third, fuse several base stations to remove
+
+156
+00:08:08,717 --> 00:08:11,044
+the blind zone at closest approach.
+
+157
+00:08:11,044 --> 00:08:15,638
+Fourth, replace the modelled angle estimate with a full array simulation.
+
+158
+00:08:15,638 --> 00:08:18,203
+Six-G sensing is still being studied in
+
+159
+00:08:18,203 --> 00:08:20,232
+the standard, so this is a map
+
+160
+00:08:20,232 --> 00:08:22,320
+of what to test, not a product.
+
+161
+00:08:23,120 --> 00:08:28,531
+Governed, auditable A I on a sensing network that is already deployed.
+
+162
+00:08:28,531 --> 00:08:30,578
+That is the opportunity:
+
+163
+00:08:30,578 --> 00:08:35,331
+protecting substations, ports and airports without new radar.
+
+164
+00:08:35,331 --> 00:08:39,864
+Try it at ai-agentic-enterprises dot com slash six-g-isac.
+
+165
+00:08:39,864 --> 00:08:45,860
+I am Yuvaraj Aravindan, building governed A I agents for regulated industries.

@@ -1,0 +1,102 @@
+{
+ "s1": {
+  "wav": "/home/yuvaraj/Projects/6g-isac/movie/tts_cache/4bde1358b72a770654c2a0d2d5cc80458e81c0b1.wav",
+  "dur": 12.96
+ },
+ "s2": {
+  "wav": "/home/yuvaraj/Projects/6g-isac/movie/tts_cache/cd0c950d12ffd2b2f206f00b77d334eeac62f154.wav",
+  "dur": 18.56
+ },
+ "s3": {
+  "wav": "/home/yuvaraj/Projects/6g-isac/movie/tts_cache/5900871a772be185bbc16e22f42f262224a4e151.wav",
+  "dur": 24.6
+ },
+ "s4": {
+  "wav": "/home/yuvaraj/Projects/6g-isac/movie/tts_cache/e7dccb360349c9be5a2d3d53b420cbbe28e64099.wav",
+  "dur": 20.72
+ },
+ "s5": {
+  "wav": "/home/yuvaraj/Projects/6g-isac/movie/tts_cache/f951aeccb1b41dbdbc9f2eb23904dcaf8796382f.wav",
+  "dur": 17.84
+ },
+ "s6": {
+  "wav": "/home/yuvaraj/Projects/6g-isac/movie/tts_cache/0dc6d4de252e87c4cd4a8e68746b71abd2dcd618.wav",
+  "dur": 17.32
+ },
+ "s7": {
+  "wav": "/home/yuvaraj/Projects/6g-isac/movie/tts_cache/347c22da1ed3859dcbd0cbed0ee48973f143e4d7.wav",
+  "dur": 20.24
+ },
+ "s7b": {
+  "wav": "/home/yuvaraj/Projects/6g-isac/movie/tts_cache/2d50ab7651fb3ad453d29367459d51434a26d61a.wav",
+  "dur": 10.28
+ },
+ "s8": {
+  "wav": "/home/yuvaraj/Projects/6g-isac/movie/tts_cache/b160215cf29525ccc6e3dbd87f7824851faab1b6.wav",
+  "dur": 9.32
+ },
+ "s9": {
+  "wav": "/home/yuvaraj/Projects/6g-isac/movie/tts_cache/4ed1b8b1ac6c5d7c8c1d5697b8f754273190afe1.wav",
+  "dur": 18.44
+ },
+ "s10": {
+  "wav": "/home/yuvaraj/Projects/6g-isac/movie/tts_cache/681a495418bf8614a1624d33854bf2f64f4de9b1.wav",
+  "dur": 23.04
+ },
+ "l1": {
+  "wav": "/home/yuvaraj/Projects/6g-isac/movie/tts_cache/00db23de4f4ddbeede6403a5aa571bd9f37fd43b.wav",
+  "dur": 24.44
+ },
+ "l2": {
+  "wav": "/home/yuvaraj/Projects/6g-isac/movie/tts_cache/402613ceb9442fb7f411c3b5c777c20b35e394fb.wav",
+  "dur": 23.08
+ },
+ "l3": {
+  "wav": "/home/yuvaraj/Projects/6g-isac/movie/tts_cache/f62dbf10f95e9b63bd3bff8c8db8c5881df32be6.wav",
+  "dur": 21.36
+ },
+ "l4": {
+  "wav": "/home/yuvaraj/Projects/6g-isac/movie/tts_cache/fb9722fa0f7cbb05d5041d3294acdec5b6cbb8b4.wav",
+  "dur": 22.88
+ },
+ "l5": {
+  "wav": "/home/yuvaraj/Projects/6g-isac/movie/tts_cache/5d545884e072ca8610b744ad8eaaab4925e6d2ab.wav",
+  "dur": 17.4
+ },
+ "l6": {
+  "wav": "/home/yuvaraj/Projects/6g-isac/movie/tts_cache/6893b2acc916752b4dc24002f0c6916e388d8584.wav",
+  "dur": 23.52
+ },
+ "l7": {
+  "wav": "/home/yuvaraj/Projects/6g-isac/movie/tts_cache/13e57db8378b52c06b48ceefccc988c2bb5f45d1.wav",
+  "dur": 15.12
+ },
+ "l8": {
+  "wav": "/home/yuvaraj/Projects/6g-isac/movie/tts_cache/6080f886837aa5f5e6a9d33ef454caba19f01d88.wav",
+  "dur": 27.6
+ },
+ "l9": {
+  "wav": "/home/yuvaraj/Projects/6g-isac/movie/tts_cache/a47cd6e213cecb4d8b1700365eda8a90e35ce64a.wav",
+  "dur": 19.6
+ },
+ "l10": {
+  "wav": "/home/yuvaraj/Projects/6g-isac/movie/tts_cache/77bfd343dfe8f83e7b2fd015a607920e041deea9.wav",
+  "dur": 22.4
+ },
+ "l11": {
+  "wav": "/home/yuvaraj/Projects/6g-isac/movie/tts_cache/9b674540022f84c54ee7b6592a7381cc0ac6e6f9.wav",
+  "dur": 21.2
+ },
+ "j_stack": {
+  "wav": "/home/yuvaraj/Projects/6g-isac/movie/tts_cache/9839c58e4bddfed390d563b628c22da6b5279940.wav",
+  "dur": 32.72
+ },
+ "j_impact": {
+  "wav": "/home/yuvaraj/Projects/6g-isac/movie/tts_cache/4a631d60c444038d7452e78021d00159e322418b.wav",
+  "dur": 20.8
+ },
+ "l12": {
+  "wav": "/home/yuvaraj/Projects/6g-isac/movie/tts_cache/7b7ce5775e6ceb18861cd911ea824f84aedbd928.wav",
+  "dur": 28.52
+ }
+}

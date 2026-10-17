@@ -1,0 +1,16 @@
+from playwright.sync_api import sync_playwright
+with sync_playwright() as p:
+    b = p.chromium.launch(executable_path="/usr/bin/google-chrome", headless=True, args=["--no-sandbox"])
+    pg = b.new_page(viewport={"width": 1500, "height": 1000}, device_scale_factor=2)
+    pg.goto("https://ai-agentic-enterprises.com/6g-isac/?view=all")
+    pg.wait_for_function("typeof RD!=='undefined' && RD && F", timeout=60000)
+    pg.evaluate("T=22; drawAll()")
+    pg.locator("#map").screenshot(path="screens/mon0.png")
+    pg.locator("#rd").screenshot(path="screens/mon1.png")
+    pg.evaluate("tab='pdrcs'; buildMetricTabs()")
+    pg.locator("#chart").screenshot(path="screens/mon2.png")
+    box = pg.locator("#agent").bounding_box()
+    pg.screenshot(path="screens/mon3.png", clip={"x": box["x"], "y": box["y"], "width": box["width"], "height": box["width"] / 1.53})
+    row = pg.locator(".card.c-map").bounding_box()
+    pg.screenshot(path="screens/big.png", clip={"x": 0, "y": row["y"], "width": 1500, "height": row["height"]})
+    b.close()
