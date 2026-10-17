@@ -1,0 +1,307 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>6G ISAC Facility Guard</title>
+<meta name="description" content="Simulation of 6G integrated sensing and communication detecting a drone near a critical facility, with a governed Llama agent and a human approval gate.">
+<style>
+:root{--bg:#0a0f1d;--panel:#111a2e;--panel2:#16213a;--line:#24324f;--text:#dbe5f5;--mute:#8396b8;--cyan:#38bdf8;--amber:#fbbf24;--red:#f87171;--green:#4ade80;--violet:#a78bfa;color-scheme:dark}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font:14px/1.45 system-ui,-apple-system,Segoe UI,Roboto,sans-serif}
+header{display:flex;flex-wrap:wrap;gap:10px 18px;align-items:center;padding:10px 16px;border-bottom:1px solid var(--line);background:#0c1426}
+h1{font-size:17px;margin:0;font-weight:650;letter-spacing:.2px}
+.sim{background:#3b2a05;color:var(--amber);border:1px solid #6b4e0a;border-radius:6px;padding:2px 8px;font-size:12px;font-weight:600}
+.note{color:var(--mute);font-size:12px;flex:1 1 320px}
+nav{display:flex;gap:6px;flex-wrap:wrap}
+nav a,button,select{background:var(--panel2);color:var(--text);border:1px solid var(--line);border-radius:6px;padding:5px 10px;font:inherit;font-size:13px;cursor:pointer;text-decoration:none}
+nav a.on,button.on{border-color:var(--cyan);color:var(--cyan)}
+button:hover,nav a:hover{border-color:var(--mute)}
+button.go{border-color:#1f6b45;color:var(--green)} button.no{border-color:#7a2d2d;color:var(--red)}
+button:disabled{opacity:.4;cursor:default}
+.bar{display:flex;flex-wrap:wrap;gap:8px 12px;align-items:center;padding:8px 16px;border-bottom:1px solid var(--line);background:#0b1223}
+.bar input[type=range]{flex:1 1 220px;accent-color:var(--cyan)}
+.clock{font:600 15px ui-monospace,Menlo,Consolas,monospace;min-width:92px}
+main{display:grid;gap:12px;padding:12px 16px;grid-template-columns:repeat(12,1fr)}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:10px 12px;min-width:0}
+.card h2{margin:0 0 6px;font-size:12px;letter-spacing:.8px;text-transform:uppercase;color:var(--mute);font-weight:600;display:flex;justify-content:space-between;gap:8px}
+.c-map{grid-column:span 5}.c-rd{grid-column:span 4}.c-trk{grid-column:span 3}
+.c-ag{grid-column:span 5}.c-au{grid-column:span 3}.c-me{grid-column:span 4}
+canvas{width:100%;height:auto;display:block;background:#0b1121;border-radius:6px}
+@media(max-width:1100px){.c-map,.c-rd,.c-trk,.c-ag,.c-au,.c-me{grid-column:span 12}}
+body[data-view]:not([data-view=all]) main{grid-template-columns:1fr}
+body[data-view]:not([data-view=all]) .card{display:none}
+body[data-view]:not([data-view=all]) canvas{max-width:1000px;margin:0 auto}
+body[data-view=map] .card.c-map,body[data-view=rd] .card.c-rd,body[data-view=agent] .card.c-ag,body[data-view=audit] .card.c-au,body[data-view=metrics] .card.c-me{display:block;grid-column:1/-1}
+body[data-view=rd] .card.c-trk{display:block;grid-column:1/-1}
+.kv{display:grid;grid-template-columns:auto 1fr;gap:3px 10px;font-size:13px}
+.kv span:nth-child(odd){color:var(--mute)} .kv b{font-weight:600;font-variant-numeric:tabular-nums}
+.badge{display:inline-block;border-radius:5px;padding:0 7px;font-size:11px;font-weight:650;border:1px solid var(--line);margin-right:4px}
+.t-low{color:var(--green)}.t-medium{color:var(--amber)}.t-high{color:#fb923c}.t-critical{color:var(--red)}
+.step{border:1px solid var(--line);border-radius:8px;padding:8px 10px;margin-bottom:8px;background:var(--panel2)}
+.step .hd{display:flex;flex-wrap:wrap;gap:6px 10px;align-items:center;font-size:12px;color:var(--mute)}
+.step .rat{margin:6px 0;font-size:13px}
+.pol{font-size:12px;color:var(--violet);margin:2px 0}
+.act{display:flex;flex-wrap:wrap;align-items:center;gap:6px;padding:3px 0;border-top:1px dashed var(--line);font-size:13px}
+.act .nm{font-family:ui-monospace,Menlo,monospace;font-size:12px}
+.st-auto{color:var(--cyan)}.st-ok{color:var(--green)}.st-rej{color:var(--red)}.st-wait{color:var(--amber)}.st-exp{color:var(--mute)}
+.sup{font-size:11px;color:var(--mute);margin-top:3px}
+.scroll{max-height:560px;overflow:auto}
+.log{font:11.5px/1.5 ui-monospace,Menlo,Consolas,monospace}
+.log div{padding:2px 0;border-bottom:1px solid #1a2744;word-break:break-word}
+.log .h{color:var(--mute)} .log .ty{color:var(--cyan)} .log .bad{color:var(--red)}
+.tabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:6px}
+.legend{font-size:12px;color:var(--mute);margin-top:4px}
+.warn{background:#2d1b05;border:1px solid #6b4e0a;color:var(--amber);padding:6px 10px;border-radius:8px;font-size:12.5px;margin-bottom:8px}
+details{margin:8px 16px;color:var(--mute);font-size:13px} summary{cursor:pointer;color:var(--text)}
+footer{padding:10px 16px 24px;color:var(--mute);font-size:12px}
+</style>
+</head>
+<body data-view="all">
+<header>
+  <h1>6G ISAC Facility Guard</h1><span class="sim">SIMULATION</span>
+  <span class="note">Simulated 13 GHz 6G base station senses a drone with its own communication signal. ISAC is not yet standardized by 3GPP; nothing here is a real network, drone or approval.</span>
+  <nav id="views"></nav>
+</header>
+<div class="bar">
+  <button id="play" class="go">Play</button><button id="restart">Restart</button>
+  <span class="clock" id="clock">t = 0.0 s</span>
+  <input id="scrub" type="range" min="0" max="310" value="0" aria-label="Simulation time">
+  <label>Speed <select id="speed"><option value="1">1×</option><option value="2" selected>2×</option><option value="4">4×</option></select></label>
+  <label>Human approver <select id="mode"><option value="script">Recorded operator</option><option value="op">Be the operator</option></select></label>
+</div>
+<main>
+  <section class="card c-map"><h2><span>Site plan</span><span id="zonechip"></span></h2><canvas id="map" width="640" height="460"></canvas>
+    <div class="legend">Dashed: true flight path · cyan: confirmed track (circle = position uncertainty) · red ×: false alarms · rings: policy zones</div></section>
+  <section class="card c-rd"><h2><span>Range–Doppler (clutter removed)</span><span>13 GHz · 400 MHz</span></h2><canvas id="rd" width="560" height="330"></canvas>
+    <div class="legend">Brightness = dB above noise. × = CFAR detection, ring = truth. Shaded band = Doppler blind zone (|v| &lt; 1.8 m/s).</div></section>
+  <section class="card c-trk"><h2>Track</h2><div class="kv" id="trk"></div></section>
+  <section class="card c-ag"><h2><span>Governed agent</span><span id="agmodel"></span></h2>
+    <div class="warn" id="opnote" style="display:none">You are the human approver. The simulation keeps running, so decide before the drone reaches the fence. Agent replies are replayed from the recorded Llama run; only the approvals are yours.</div>
+    <div class="scroll" id="agent"></div></section>
+  <section class="card c-au"><h2><span>Audit log</span><span id="auditstat"></span></h2>
+    <div class="tabs"><button id="verify">Verify chain</button><button id="tamper">Tamper with entry 20</button></div>
+    <div class="scroll log" id="audit"></div></section>
+  <section class="card c-me"><h2>Detection and tracking metrics</h2><div class="tabs" id="mtabs"></div><canvas id="chart" width="560" height="340"></canvas><div class="legend" id="mnote"></div></section>
+</main>
+<details><summary>How this works and what it does not show</summary>
+<div style="padding:6px 0;max-width:980px">
+<p><b>Pipeline.</b> Sionna ray tracing models a substation at 13 GHz. A 400 MHz OFDM signal reflects off a small drone (radar cross-section 0.01 m²). Static clutter is removed, a range–Doppler map is formed, a CFAR detector finds targets, a 16×8 panel estimates the angle, and a Kalman tracker follows the drone. A governed Llama 3.1 8B agent proposes actions; a policy engine enforces rules; a human approves anything that touches the physical world; every step goes into a hash-chained audit log.</p>
+<p><b>Limits.</b> The drone is a point scatterer; antenna gain is flat; angle estimation is modelled at the detected cell, not a full array simulation; a hovering drone would be invisible to the clutter removal; at the closest approach the drone moves sideways and falls into the Doppler blind zone, so the track coasts for about two frames. The recorded operator is scripted. Agent replies are cached from one real Llama run, so this page needs no GPU.</p>
+</div></details>
+<footer>Radio: Sionna RT 1.2.2 + custom OFDM sensing · Agent: <span id="foot-model">Llama 3.1 8B</span> via Ollama (recorded run replayed) · Simulation only.</footer>
+
+<script>
+"use strict";
+const Q = new URLSearchParams(location.search);
+const VIEW = ["all","map","rd","agent","audit","metrics"].includes(Q.get("view")) ? Q.get("view") : "all";
+document.body.dataset.view = VIEW;
+const VIEWS=[["all","All"],["map","Map"],["rd","Range–Doppler"],["agent","Agent"],["audit","Audit"],["metrics","Metrics"]];
+document.getElementById("views").innerHTML = VIEWS.map(([v,l])=>`<a href="?view=${v}" class="${v===VIEW?"on":""}">${l}</a>`).join("");
+
+const $ = id => document.getElementById(id);
+const C = {cyan:"#38bdf8",amber:"#fbbf24",red:"#f87171",green:"#4ade80",mute:"#8396b8",line:"#24324f",text:"#dbe5f5",violet:"#a78bfa"};
+let F, TL, AU, MET, RDM, RD;                       // data
+let T = 0, playing = false, last = 0, mode = "script";
+const DT = 0.5, T0 = 0, TEND = 31;
+const GNB = [36,0,24], OPDEC = {};                // operator decisions keyed "step|action"
+const opLog = [];                                  // client-side chain of operator decisions
+
+async function load(){
+  const j = u => fetch(u).then(r => r.json());
+  [F, TL, AU, MET, RDM] = await Promise.all([j("data/frames.json"), j("data/timeline.json"), j("data/audit.json"), j("data/metrics.json"), j("data/rd_meta.json")]);
+  RD = new Uint8Array(await (await fetch("data/rd_frames.bin")).arrayBuffer());
+  $("agmodel").textContent = TL.model + " · replayed";
+  $("foot-model").textContent = TL.model;
+  $("scrub").max = Math.round(TEND*10);
+  buildMetricTabs(); drawAll(); if (Q.get("autoplay")==="1") play(true);
+}
+
+/* ---------- helpers ---------- */
+function fit(c,bw,bh){const dpr=Math.min(2,window.devicePixelRatio||1),w=Math.max(200,Math.round(c.clientWidth*dpr)),h=Math.round(w*bh/bw);if(c.width!==w||c.height!==h){c.width=w;c.height=h;}return w/bw;}
+const frameIdx = t => Math.max(0, Math.min(F.frames.length-1, Math.round((t - F.frames[0].t)/DT)));
+const hyp = (a,b)=>Math.hypot(a,b);
+function lerpTruth(t){
+  const k = frameIdx(t), a = F.frames[k], b = F.frames[Math.min(k+1,F.frames.length-1)];
+  const f = b.t===a.t ? 0 : Math.max(0,Math.min(1,(t-a.t)/(b.t-a.t)));
+  return a.truth.slice(0,3).map((v,i)=> v + (b.truth[i]-v)*f);
+}
+const zoneOf = d => d<=45?"critical":d<=120?"restricted":d<=250?"warning":"outside";
+function posFromMeas(d){const w=Math.sqrt(Math.max(1-d[2]*d[2]-d[3]*d[3],1e-6));return [GNB[0]+d[0]*w,GNB[1]+d[0]*d[2],GNB[2]+d[0]*d[3]];}
+
+/* ---------- map ---------- */
+function drawMap(){
+  const c=$("map"),u=fit(c,640,460),g=c.getContext("2d"),W=c.width,H=c.height; g.clearRect(0,0,W,H);
+  const X0=-80,X1=340,Y0=-240,Y1=70, s=Math.min(W/(X1-X0),H/(Y1-Y0)), ox=(W-(X1-X0)*s)/2, oy=(H-(Y1-Y0)*s)/2;
+  const P=(x,y)=>[ox+(x-X0)*s, oy+(Y1-y)*s], fs=n=>`${n*u}px system-ui`;
+  g.strokeStyle="#16213a";g.lineWidth=u;for(let x=-100;x<=340;x+=50){g.beginPath();g.moveTo(...P(x,Y0));g.lineTo(...P(x,Y1));g.stroke();}
+  for(let y=-250;y<=100;y+=50){g.beginPath();g.moveTo(...P(X0,y));g.lineTo(...P(X1,y));g.stroke();}
+  const zc={warning:C.amber,restricted:"#fb923c",critical:C.red};
+  [["warning",250],["restricted",120],["critical",45]].forEach(([n,r])=>{const [cx,cy]=P(0,0);g.strokeStyle=zc[n];g.globalAlpha=.6;g.lineWidth=1.5*u;g.setLineDash([6*u,5*u]);g.beginPath();g.arc(cx,cy,r*s,0,7);g.stroke();g.setLineDash([]);g.globalAlpha=1;g.fillStyle=zc[n];g.font=fs(12);const [lx,ly]=P(r*0.707,-r*0.707);g.fillText(n+" "+r+" m",lx+4*u,ly+12*u);});
+  let [fx,fy]=P(-30,25),[fx2,fy2]=P(30,-25);g.fillStyle="#1d2d4d";g.fillRect(fx,fy,fx2-fx,fy2-fy);g.strokeStyle="#7aa2d6";g.lineWidth=2*u;g.strokeRect(fx,fy,fx2-fx,fy2-fy);
+  g.fillStyle=C.text;g.font=fs(12);g.fillText("substation",fx+5*u,fy+16*u);
+  const [mx,my]=P(GNB[0],GNB[1]);g.fillStyle=C.cyan;g.beginPath();g.moveTo(mx,my-9*u);g.lineTo(mx-8*u,my+7*u);g.lineTo(mx+8*u,my+7*u);g.fill();g.fillText("6G base station",mx-36*u,my+22*u);
+  g.strokeStyle="rgba(56,189,248,.35)";g.lineWidth=u;g.beginPath();g.moveTo(mx,my);g.arc(mx,my,300*s,-1.05,1.05);g.closePath();g.stroke();
+  const fr=F.frames; g.strokeStyle="rgba(219,229,245,.3)";g.setLineDash([4*u,5*u]);g.beginPath();fr.forEach((f,i)=>{const [x,y]=P(f.truth[0],f.truth[1]);i?g.lineTo(x,y):g.moveTo(x,y);});g.stroke();g.setLineDash([]);
+  const k=frameIdx(T);
+  g.fillStyle=C.cyan;for(let i=0;i<=k;i++){const tr=fr[i].track;if(tr&&tr.c&&fr[i].t<=T+0.01){const [x,y]=P(tr.p[0],tr.p[1]);g.globalAlpha=.8;g.fillRect(x-2*u,y-2*u,4*u,4*u);}}g.globalAlpha=1;
+  const cur=fr[k];
+  if(cur.t<=T+0.5){g.lineWidth=1.5*u;cur.det.forEach(d=>{if(!d[5]){const p=posFromMeas(d);const [x,y]=P(p[0],p[1]);g.strokeStyle=C.red;g.globalAlpha=.65;g.beginPath();g.moveTo(x-4*u,y-4*u);g.lineTo(x+4*u,y+4*u);g.moveTo(x+4*u,y-4*u);g.lineTo(x-4*u,y+4*u);g.stroke();g.globalAlpha=1;}});
+    if(cur.track&&cur.track.c){const [x,y]=P(cur.track.p[0],cur.track.p[1]);g.strokeStyle=C.cyan;g.lineWidth=2*u;g.beginPath();g.arc(x,y,Math.max(6*u,cur.track.s*s*2),0,7);g.stroke();}}
+  const tp=lerpTruth(T),[dx,dy]=P(tp[0],tp[1]);g.fillStyle=C.amber;g.beginPath();g.arc(dx,dy,6*u,0,7);g.fill();g.fillStyle=C.text;g.font=fs(12);g.fillText("drone",dx+9*u,dy-6*u);
+}
+
+/* ---------- range-Doppler ---------- */
+const LUT=(()=>{const st=[[10,16,32],[43,58,143],[31,161,135],[250,204,21],[255,255,255]],o=new Uint8ClampedArray(256*3);for(let i=0;i<256;i++){const p=i/255*(st.length-1),a=Math.min(Math.floor(p),st.length-2),f=p-a;for(let c=0;c<3;c++)o[i*3+c]=st[a][c]+(st[a+1][c]-st[a][c])*f;}return o;})();
+const off=document.createElement("canvas");
+function drawRD(){
+  const c=$("rd"),u=fit(c,560,330),g=c.getContext("2d"),W=c.width,H=c.height,mL=56*u,mB=36*u,mT=6*u,mR=8*u,pw=W-mL-mR,ph=H-mT-mB;
+  g.clearRect(0,0,W,H);const k=frameIdx(T),rows=RDM.rows,cols=RDM.cols,c2=cols/2;
+  off.width=c2;off.height=rows;const og=off.getContext("2d"),im=og.createImageData(c2,rows),base=k*rows*cols;
+  for(let r=0;r<rows;r++)for(let q=0;q<c2;q++){const i0=base+r*cols+2*q,v=Math.max(RD[i0],RD[i0+1]),o=((rows-1-r)*c2+q)*4;im.data[o]=LUT[v*3];im.data[o+1]=LUT[v*3+1];im.data[o+2]=LUT[v*3+2];im.data[o+3]=255;}
+  og.putImageData(im,0,0);g.imageSmoothingEnabled=false;g.drawImage(off,mL,mT,pw,ph);
+  const vmin=RDM.vel[0],vmax=RDM.vel[rows-1],X=r=>mL+r/RDM.range_max*pw,Y=v=>mT+(vmax-v)/(vmax-vmin)*ph;
+  g.fillStyle="rgba(255,255,255,.10)";g.fillRect(mL,Y(1.8),pw,Y(-1.8)-Y(1.8));g.fillStyle=C.mute;g.font=`${11*u}px system-ui`;g.fillText("blind zone",mL+6*u,Y(0)+4*u);
+  const fr=F.frames[k];
+  g.strokeStyle=C.red;g.lineWidth=2*u;fr.det.forEach(d=>{if(Math.abs(d[1])<=30){const x=X(d[0]),y=Y(d[1]);g.beginPath();g.moveTo(x-6*u,y-6*u);g.lineTo(x+6*u,y+6*u);g.moveTo(x+6*u,y-6*u);g.lineTo(x-6*u,y+6*u);g.stroke();}});
+  const tv=fr.truth[4],tr=fr.truth[3];if(Math.abs(tv)<=30){g.strokeStyle="#fff";g.lineWidth=2*u;g.beginPath();g.arc(X(tr),Y(tv),11*u,0,7);g.stroke();}
+  g.fillStyle=C.mute;g.font=`${11*u}px system-ui`;g.strokeStyle=C.line;g.lineWidth=u;
+  for(let r=0;r<=350;r+=50){const x=X(r);g.fillText(r,x-8*u,H-22*u);g.beginPath();g.moveTo(x,mT+ph);g.lineTo(x,mT+ph+4*u);g.stroke();}
+  for(let v=-30;v<=30;v+=10){g.fillText(v,mL-26*u,Y(v)+4*u);}
+  g.fillText("range (m)",mL+pw/2-22*u,H-6*u);g.save();g.translate(11*u,mT+ph/2+60*u);g.rotate(-Math.PI/2);g.fillText("radial velocity (m/s)   ← approaching",0,0);g.restore();
+}
+
+/* ---------- track panel ---------- */
+function state(){ // derived agent state at T
+  const steps=TL.steps.filter(s=>s.t<=T+1e-6);
+  return steps;
+}
+function actionState(si,a,step){
+  const key=si+"|"+a.action;
+  if(a.status==="auto")return {s:"auto",t:step.t,txt:"executed automatically (internal, reversible)"};
+  if(a.status!=="needs_approval")return null;
+  const role=TL.actions[a.action].approver_role;
+  if(mode==="op"){const d=OPDEC[key];if(d)return {s:d.v==="approve"?"ok":"rej",t:d.t,txt:(d.v==="approve"?"approved by you":"rejected by you")+` at t=${d.t.toFixed(1)} s`+leadTxt(d)};
+    if(T>=step.t+20)return {s:"exp",t:step.t+20,txt:"expired, no decision in 20 s"};return {s:"wait",key,role,t:step.t};}
+  const ev=step.events.find(e=>e.action===a.action&&["executed_approved","rejected","expired"].includes(e.outcome));
+  if(ev&&T>=ev.t){const ok=ev.outcome==="executed_approved";return {s:ok?"ok":ev.outcome==="expired"?"exp":"rej",t:ev.t,txt:(ok?"approved":ev.outcome==="expired"?"expired":"rejected")+(ev.approver?` by ${ev.approver}`:"")+` at t=${ev.t.toFixed(1)} s`+(ev.reason?` — “${ev.reason}”`:"")+(ok?leadTxt({t:ev.t}):"")};}
+  return {s:"wait",role,t:step.t};
+}
+const leadTxt=d=>{const l=TL.fence_cross_t-d.t;return l>=0?` · ${l.toFixed(1)} s before the drone reaches the fence`:` · ${(-l).toFixed(1)} s AFTER the drone reached the fence`;};
+
+function drawTrack(){
+  const k=frameIdx(T),f=F.frames[k],tp=lerpTruth(T),dist=hyp(tp[0],tp[1]),zone=zoneOf(dist);
+  const steps=state(),thr=steps.length?steps[steps.length-1].decision.threat_level:"–";
+  const tr=f.track&&f.t<=T+0.5?f.track:null;
+  const eta=TL.fence_cross_t-T;
+  $("zonechip").innerHTML=`zone: <b>${zone}</b>`;
+  $("trk").innerHTML=[
+    ["Status",tr?(tr.c?'<b class="st-ok">confirmed track</b>':'<b class="st-wait">tentative</b>'):'<b class="st-exp">no track yet</b>'],
+    ["Range to base station",f.truth[3].toFixed(0)+" m"],["Distance to facility",dist.toFixed(0)+" m"],
+    ["Altitude",tp[2].toFixed(0)+" m"],["Radial speed",f.truth[4].toFixed(1)+" m/s"],
+    ["Position error",f.err!=null&&f.t<=T+0.5?f.err.toFixed(2)+" m":"–"],
+    ["Time to fence",eta>0?eta.toFixed(1)+" s":"crossed"],["Agent threat",`<b class="t-${thr}">${thr}</b>`]].map(([a,b])=>`<span>${a}</span><b>${b}</b>`).join("");
+}
+
+/* ---------- agent panel ---------- */
+let agentSig="";
+function drawAgent(){
+  const steps=state(),parts=[];let sig=mode+T.toFixed(1)+JSON.stringify(OPDEC);
+  steps.forEach((st,si)=>{
+    const d=st.decision,ev=st.evidence;
+    let h=`<div class="step"><div class="hd"><b>t=${st.t.toFixed(1)} s</b><span>${st.trigger.replace(/_/g," ")}</span><span class="badge t-${d.threat_level}">${d.threat_level.toUpperCase()}</span><span>${d.classification.replace(/_/g," ")}</span><span>${ev.distance_to_facility_m} m out · ${ev.seconds_to_fence==null?"–":ev.seconds_to_fence+" s to fence"}</span><span>${TL.model} · ${st.llm.latency_s}s</span></div>`;
+    h+=`<div class="rat">“${d.rationale}”</div>`;
+    d.policy_notes.forEach(n=>{h+=`<div class="pol">⚖ policy: ${n}</div>`;});
+    let sup=0;
+    d.actions.forEach(a=>{
+      if(a.status==="duplicate"){sup++;return;}
+      if(a.status==="blocked"){h+=`<div class="act"><span class="nm">${a.action}</span><span class="st-rej">blocked — ${a.why}</span></div>`;return;}
+      const s=actionState(si,a,st);if(!s)return;
+      let btn="";if(s.s==="wait"&&mode==="op"){btn=` <button class="go" data-k="${s.key}" data-v="approve">Approve</button> <button class="no" data-k="${s.key}" data-v="reject">Reject</button> <span class="st-wait">${Math.max(0,st.t+20-T).toFixed(0)} s left</span>`;}
+      const lab={auto:"AUTO",ok:"APPROVED",rej:"REJECTED",wait:"WAITING FOR "+(s.role||"").toUpperCase(),exp:"EXPIRED"}[s.s];
+      h+=`<div class="act"><span class="nm">${a.action}</span><span class="badge st-${s.s}">${lab}</span><span style="color:var(--mute);font-size:12px">${s.txt||""}</span>${btn}</div>`;
+    });
+    if(sup)h+=`<div class="sup">${sup} repeat proposal${sup>1?"s":""} suppressed (already requested or done)</div>`;
+    if(d.rationale_grounded===false)h+=`<div class="pol">⚠ grounding check: the model’s wording does not match the evidence, flagged in the audit log</div>`;
+    parts.push(h+"</div>");
+  });
+  const el=$("agent");const html=parts.length?parts.join(""):'<div style="color:var(--mute)">Waiting for a confirmed track…</div>';
+  if(el.dataset.sig!==html){const sc=el.scrollTop;el.innerHTML=html;el.dataset.sig=html;el.scrollTop=sc;
+    el.querySelectorAll("button[data-k]").forEach(b=>b.onclick=()=>decide(b.dataset.k,b.dataset.v));}
+}
+async function sha(s){const b=await crypto.subtle.digest("SHA-256",new TextEncoder().encode(s));return [...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,"0")).join("");}
+async function decide(key,v){
+  OPDEC[key]={v,t:T};const [si,action]=key.split("|");const prev=opLog.length?opLog[opLog.length-1].hash:"0".repeat(64);
+  const e={seq:opLog.length,sim_t:+T.toFixed(2),type:"operator_decision",payload:{action,decision:v,approver:"you (viewer)"},prev};
+  e.canon=JSON.stringify(e);e.hash=await sha(e.canon);opLog.push(e);drawAgent();drawAudit();
+}
+
+/* ---------- audit ---------- */
+let tampered=false,verifyMsg="";
+function auditEntries(){return AU.map(e=>tampered&&e.seq===20?{...e,canon:e.canon.replace(/"action": "[^"]*"/,'"action": "open_gate"')}:e);}
+function drawAudit(){
+  const vis=AU.filter(e=>e.sim_t<=T+1e-6);
+  let h=vis.map(e=>{const p=e.payload,s=p.action?p.action:p.trigger||p.threat_level||p.zone||"";
+    return `<div><span class="h">#${e.seq} t=${e.sim_t.toFixed(1)}</span> <span class="ty">${e.type}</span> ${s?`<span>${s}</span>`:""} <span class="h">${e.hash.slice(0,10)}…</span></div>`;}).join("");
+  if(opLog.length)h+=`<div class="h" style="margin-top:6px">— your session (client-side chain) —</div>`+opLog.map(e=>`<div><span class="h">#${e.seq} t=${e.sim_t}</span> <span class="ty">${e.type}</span> ${e.payload.action} ${e.payload.decision} <span class="h">${e.hash.slice(0,10)}…</span></div>`).join("");
+  $("audit").innerHTML=h||'<div class="h">No entries yet.</div>';
+  $("auditstat").innerHTML=verifyMsg||`${vis.length}/${AU.length} entries`;
+}
+async function verify(){
+  const list=auditEntries();let prev="0".repeat(64);
+  for(const e of list){const h=await sha(e.canon);let ok=h===e.hash&&JSON.parse(e.canon).prev===prev;if(!ok){verifyMsg=`<span class="bad">✗ chain broken at entry #${e.seq}</span>`;drawAudit();return;}prev=e.hash;}
+  let n=list.length;prev="0".repeat(64);for(const e of opLog){if(await sha(e.canon)!==e.hash||e.prev!==prev){verifyMsg=`<span class="bad">✗ your session chain broken</span>`;drawAudit();return;}prev=e.hash;n++;}
+  verifyMsg=`<span style="color:var(--green)">✓ ${n} entries, SHA-256 chain intact (recomputed in your browser)</span>`;drawAudit();
+}
+$("verify").onclick=verify;
+$("tamper").onclick=()=>{tampered=!tampered;$("tamper").textContent=tampered?"Restore entry 20":"Tamper with entry 20";$("tamper").classList.toggle("on",tampered);verifyMsg="";drawAudit();verify();};
+
+/* ---------- metrics charts ---------- */
+const TABS=[["pdr","Detection vs range"],["pdrcs","Detection vs target size"],["roc","ROC"],["trk","Tracking error"],["sum","Summary"]];let tab="pdr";
+function buildMetricTabs(){$("mtabs").innerHTML=TABS.map(([k,l])=>`<button data-t="${k}" class="${k===tab?"on":""}">${l}</button>`).join("");$("mtabs").querySelectorAll("button").forEach(b=>b.onclick=()=>{tab=b.dataset.t;buildMetricTabs();drawMetrics();});drawMetrics();}
+function lineChart(series,o){
+  const c=$("chart"),u=fit(c,560,340),g=c.getContext("2d"),W=c.width,H=c.height,mL=64*u,mB=40*u,mT=10*u,mR=12*u,pw=W-mL-mR,ph=H-mT-mB;g.clearRect(0,0,W,H);
+  const xs=series.flatMap(s=>s.x),xmin=o.xmin??Math.min(...xs),xmax=o.xmax??Math.max(...xs),ymax=o.ymax,ymin=o.ymin??0;
+  const X=x=>mL+(o.xlog?(Math.log10(x)-Math.log10(xmin))/(Math.log10(xmax)-Math.log10(xmin)):(x-xmin)/(xmax-xmin))*pw,Y=y=>mT+(1-(y-ymin)/(ymax-ymin))*ph;
+  g.strokeStyle=C.line;g.fillStyle=C.mute;g.font=`${11*u}px system-ui`;g.lineWidth=u;
+  (o.yticks||[0,.25,.5,.75,1]).forEach(t=>{g.beginPath();g.moveTo(mL,Y(t));g.lineTo(W-mR,Y(t));g.stroke();g.fillText(o.yfmt?o.yfmt(t):t,24*u,Y(t)+4*u);});
+  (o.xticks||[]).forEach(t=>{g.beginPath();g.moveTo(X(t),mT);g.lineTo(X(t),mT+ph);g.stroke();g.fillText(o.xfmt?o.xfmt(t):t,X(t)-12*u,H-22*u);});
+  if(o.hline){g.strokeStyle=C.mute;g.setLineDash([5*u,4*u]);g.beginPath();g.moveTo(mL,Y(o.hline));g.lineTo(W-mR,Y(o.hline));g.stroke();g.setLineDash([]);}
+  const cols=[C.cyan,C.amber,C.green,C.violet,C.red];
+  series.forEach((s,i)=>{g.strokeStyle=cols[i%5];g.fillStyle=cols[i%5];g.lineWidth=2.4*u;g.beginPath();s.x.forEach((x,j)=>{const px=X(x),py=Y(s.y[j]);j?g.lineTo(px,py):g.moveTo(px,py);});g.stroke();s.x.forEach((x,j)=>{g.beginPath();g.arc(X(x),Y(s.y[j]),3.2*u,0,7);g.fill();});g.fillRect(mL+10*u,mT+14*u+i*17*u,14*u,3*u);g.fillStyle=C.text;g.fillText(s.name,mL+30*u,mT+19*u+i*17*u);});
+  g.fillStyle=C.mute;g.fillText(o.xlabel,mL+pw/2-70*u,H-6*u);g.save();g.translate(11*u,mT+ph/2+40*u);g.rotate(-Math.PI/2);g.fillText(o.ylabel,0,0);g.restore();
+}
+function drawMetrics(){
+  const m=MET,c=$("chart");c.style.display="block";let note="";
+  if(tab==="pdr"){const b=m.pd_vs_range.bins_m,x=b.slice(0,-1).map((v,i)=>(v+b[i+1])/2),ser=Object.entries(m.pd_vs_range.pd).map(([k,v])=>({name:"target "+k.split("_")[1]+" m²",x,y:v}));
+    lineChart(ser,{xlabel:"range from base station (m)",ylabel:"detection probability",ymax:1.05,xmin:0,xmax:360,xticks:[0,60,120,180,240,300,360]});
+    note="20 simulated flights per curve, 1e-6 false-alarm design. The dip under 30 m is the Doppler blind zone at closest approach (drone moving sideways).";}
+  if(tab==="pdrcs"){const p=m.pd_vs_rcs_300m,ix=[3,1,5],ser=ix.map(i=>({name:"false-alarm design "+(+p.pfa[i]).toExponential(0).replace("e-","e−"),x:p.rcs,y:p.pd.map(r=>r[i])}));
+    lineChart(ser,{xlog:true,xlabel:"target radar cross-section (m²), at "+Math.round(p.range_m)+" m",ylabel:"detection probability",ymax:1.05,hline:.9,xticks:[1e-4,1e-3,1e-2],xfmt:v=>v.toExponential(0).replace("e-","e−")});
+    note="Smallest target detected ≥90% of the time at 300 m: about 6e−4 m² at 1e−4 false-alarm design, 1e−3 m² at 1e−6. Large birds sit around 1e−3–1e−2 m², so they are detected too.";}
+  if(tab==="roc"){const p=m.pd_vs_rcs_300m,ix=[2,4,6],ser=ix.map(i=>({name:"RCS "+p.rcs[i].toExponential(1).replace("e-","e−")+" m²",x:p.pfa,y:p.pd.map(r=>r[i]).map((_,k,a)=>p.pd[i][k])}));
+    lineChart(ser,{xlog:true,xlabel:"false-alarm probability per cell",ylabel:"detection probability",ymax:1.05,xticks:[1e-8,1e-7,1e-6,1e-5,1e-4,1e-3],xfmt:v=>v.toExponential(0).replace("e-","e−")});
+    note="Detection vs false alarms at about 300 m for three target sizes. Lower false-alarm settings cost sensitivity.";}
+  if(tab==="trk"){const t=m.tracking_error_by_range,ser=Object.entries(t).map(([k,v])=>({name:"target "+k.split("_")[1]+" m² (median)",x:v.range_m,y:v.median_m}));
+    lineChart(ser,{xlabel:"range from base station (m)",ylabel:"3D position error (m)",ymax:3.5,yticks:[0,1,2,3],xmin:0,xmax:360,xticks:[0,60,120,180,240,300,360]});
+    note="Median 3D position error over 20 flights. Error grows with range because angle accuracy falls with signal-to-noise.";}
+  if(tab==="sum"){const u=fit(c,560,340),g=c.getContext("2d");g.clearRect(0,0,c.width,c.height);const a=m.monte_carlo["drone_0.01"],b=m.monte_carlo["small_0.001"],f=m.pfa_check;
+    const rows=[["Track confirmed at (median)",a.confirm_range_median_m.toFixed(0)+" m"],["Warning before drone reaches fence","≈ 27 s"],["Confirmed in",a.confirmed_runs+" of "+a.runs+" flights"],["3D position error RMS",a.pos_err_rmse_m.toFixed(2)+" m (90% < "+a.pos_err_p90_m.toFixed(1)+" m)"],["Speed error RMS",a.vel_err_rmse_mps.toFixed(2)+" m/s"],["Small target (0.001 m²) position RMS",b.pos_err_rmse_m.toFixed(1)+" m"],["False detections per frame",a.false_detections_per_frame.toFixed(1)+" (design load)"],["Measured vs design false alarms",(+f.measured[4]).toExponential(2)+" vs 1e-06"]];
+    g.font=`${13*u}px system-ui`;rows.forEach((r,i)=>{g.fillStyle=C.mute;g.fillText(r[0],14*u,30*u+i*38*u);g.fillStyle=C.text;g.font=`600 ${15*u}px system-ui`;g.fillText(r[1],300*u,30*u+i*38*u);g.font=`${13*u}px system-ui`;});
+    note="From the Monte Carlo simulation (20 flights, 13 GHz, 400 MHz). Simulation only.";}
+  $("mnote").textContent=note;
+}
+
+/* ---------- loop ---------- */
+function drawAll(){if(!F||!RD)return;drawMap();drawRD();drawTrack();drawAgent();drawAudit();$("clock").textContent="t = "+T.toFixed(1)+" s";$("scrub").value=Math.round(T*10);}
+function tick(ts){if(!playing)return;const dt=Math.min(0.1,(ts-last)/1000);last=ts;T=Math.min(TEND,T+dt*(+$("speed").value));drawAll();if(T>=TEND){play(false);return;}requestAnimationFrame(tick);}
+function play(on){if(on&&(!F||!RD))return;playing=on;$("play").textContent=on?"Pause":"Play";$("play").className=on?"":"go";if(on){if(T>=TEND)T=0;last=performance.now();requestAnimationFrame(tick);}}
+$("play").onclick=()=>play(!playing);
+$("restart").onclick=()=>{T=0;Object.keys(OPDEC).forEach(k=>delete OPDEC[k]);opLog.length=0;verifyMsg="";drawAll();};
+$("scrub").oninput=e=>{T=e.target.value/10;drawAll();};
+$("mode").onchange=e=>{mode=e.target.value;$("opnote").style.display=mode==="op"?"block":"none";Object.keys(OPDEC).forEach(k=>delete OPDEC[k]);opLog.length=0;T=0;drawAll();};
+window.addEventListener("resize",()=>{if(F)drawAll();drawMetrics&&F&&drawMetrics();});
+load().catch(err=>{document.querySelector("main").innerHTML='<div class="card" style="grid-column:1/-1">Could not load data: '+err+'</div>';});
+</script>
+</body>
+</html>
