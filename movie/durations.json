@@ -98,5 +98,33 @@
  "l12": {
   "wav": "/home/yuvaraj/Projects/6g-isac/movie/tts_cache/7b7ce5775e6ceb18861cd911ea824f84aedbd928.wav",
   "dur": 28.52
+ },
+ "q_seq": {
+  "wav": "/home/yuvaraj/Projects/6g-isac/movie/tts_cache/80c8a88cbd81997d4676ce1b62d66a92a17099c3.wav",
+  "dur": 21.68
+ },
+ "q_flow": {
+  "wav": "/home/yuvaraj/Projects/6g-isac/movie/tts_cache/a3e9f19d5264d4a566c630b68bfeb8a4a9680fc6.wav",
+  "dur": 20.84
+ },
+ "q_cfg": {
+  "wav": "/home/yuvaraj/Projects/6g-isac/movie/tts_cache/7eb88b53b1d172e31861d978457b2c122e5cb22d.wav",
+  "dur": 22.64
+ },
+ "q_gov": {
+  "wav": "/home/yuvaraj/Projects/6g-isac/movie/tts_cache/e6341297f22ea35ba90c7cef5639f7cf0defc619.wav",
+  "dur": 14.8
+ },
+ "q_audit": {
+  "wav": "/home/yuvaraj/Projects/6g-isac/movie/tts_cache/235c3f69f2aa9ab42c1a2e5addec6d6b88fa0aef.wav",
+  "dur": 15.56
+ },
+ "q_cfar": {
+  "wav": "/home/yuvaraj/Projects/6g-isac/movie/tts_cache/38da97efcead9cdd7b1e2ee592b0cc932bd50706.wav",
+  "dur": 14.84
+ },
+ "q_repo": {
+  "wav": "/home/yuvaraj/Projects/6g-isac/movie/tts_cache/420b18c55df0c52f173c37eeb7ab448cb13a8222.wav",
+  "dur": 19.36
  }
 }

@@ -14,6 +14,7 @@ import imageio_ffmpeg
 from PIL import Image, ImageDraw
 from common import *
 import cards
+import docs_cards  # registers the documentation cards
 from script import BYID, ORDER_JUDGE, ORDER_LONG
 
 HERE = os.path.dirname(os.path.abspath(__file__))
@@ -175,7 +176,7 @@ def compose(content, meta, t, sid, caps):
             ov.alpha_composite(tcrop, (0, BAR))
     img = Image.alpha_composite(img.convert("RGBA"), ov).convert("RGB")
     section = {"arch": "ARCHITECTURE", "numbers": "THE NUMBERS", "cfar": "DETECTION", "tracker": "TRACKING", "evidence": "AGENT INPUT", "hostile": "SECURITY TEST",
-               "replay": "REPRODUCIBILITY", "stack": "STACK", "impact": "IMPACT", "next": "NEXT", "isac": "ISAC"}.get(meta.get("card", ""), "")
+               "replay": "REPRODUCIBILITY", "stack": "STACK", "impact": "IMPACT", "next": "NEXT", "isac": "ISAC", "seqdiag": "SEQUENCE DIAGRAM", "workflow": "WORKFLOW", "config": "CONFIGURATION", "code_gov": "CODE · POLICY", "code_audit": "CODE · AUDIT", "code_cfar": "CODE · DETECTOR", "repo": "COMMITS AND TESTS"}.get(meta.get("card", ""), "")
     chrome_bars(img, right=right or section)
     for a, b, s in caps:
         if a <= t < b:

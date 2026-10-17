@@ -34,4 +34,17 @@ BYID = {s["id"]: s for s in SEGS + EXTRA}
 ORDER_JUDGE = ["s1", "s2", "s3", "s4", "s5", "s6", "s7", "s7b", "s8", "s9", "j_stack", "j_impact", "s10"]
 ORDER_LONG = ["s1", "s2", "l1", "s3", "l2", "l3", "s4", "l4", "l5", "s5", "l6", "l7", "s6", "l8", "s7", "s7b", "l9", "l10", "s8", "l11", "s9", "j_stack", "j_impact", "l12", "s10"]
 
+EXTRA += [
+ dict(id="q_seq", visual=("card", "seqdiag"), text="Here is the sequence. The base station's echo goes to the sensing pipeline. Detections go to the tracker. A confirmed track goes to the evidence tools, and the evidence, the rules and the action catalog go to Llama. Its proposal goes to the policy engine, then to a human for approval. Every message is also written to the audit log."),
+ dict(id="q_flow", visual=("card", "workflow"), text="And the workflow for each proposed action. The policy engine decides. Internal, reversible steps run automatically. Jamming, or anything outside the catalog, is blocked. Everything else waits for a human, who approves, rejects, or lets it expire after twenty seconds. Only approved actions run, and only in simulation."),
+ dict(id="q_cfg", visual=("card", "config"), text="These are the real configuration files. The policy file defines the zones, the actions, and which need approval. The radio settings fix thirteen gigahertz, four hundred megahertz and a hundred square centimetre target. Deployment is one AWS L four box, Llama three point one at temperature zero with a fixed seed, and a static page behind Caddy."),
+ dict(id="q_gov", visual=("card", "code_gov"), text="This is the policy engine in code. If the drone is unregistered and in the restricted zone, the threat level is raised to at least high, whatever the model said. Actions outside the catalog, such as jamming, are blocked."),
+ dict(id="q_audit", visual=("card", "code_audit"), text="And the audit log. Each entry stores the hash of the previous entry, so changing any line breaks every hash after it. The dashboard recomputes these hashes in your browser, and the self-test confirms that a tampered entry is detected."),
+ dict(id="q_cfar", visual=("card", "code_cfar"), text="The detector is short. A box filter estimates the local noise from training cells, leaving out the guard cells, and a threshold factor derived from the false-alarm target is applied. It runs on the GPU over two million cells per frame."),
+ dict(id="q_repo", visual=("card", "repo"), text="Everything is in version control, one commit per stage, from the radio simulation to the dashboard and this film. The code is in a private repository, with access on request. The self-test passes all six checks, and replaying the recorded Llama answers reproduces the same event sequence with no GPU."),
+]
+BYID = {s["id"]: s for s in SEGS + EXTRA}
+ORDER_JUDGE = ["s1", "s2", "s3", "q_seq", "s4", "q_cfar", "s5", "s6", "q_cfg", "s7", "q_flow", "s7b", "q_gov", "s8", "q_audit", "s9", "q_repo", "j_stack", "j_impact", "s10"]
+ORDER_LONG = ["s1", "s2", "s3", "q_seq", "l2", "l3", "s4", "q_cfar", "l5", "s5", "l6", "l7", "s6", "q_cfg", "s7", "q_flow", "s7b", "l9", "q_gov", "s8", "q_audit", "s9", "q_repo", "j_stack", "j_impact", "l12", "s10"]
+
 def tts_text(t): return t   # spellings already phonetic ("six-G", "O F D M", "C F A R")
