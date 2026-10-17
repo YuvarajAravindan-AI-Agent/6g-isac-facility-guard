@@ -1,0 +1,24 @@
+# media and renders
+movie/frames/
+movie/clips/
+movie/seg/
+movie/cap/
+movie/test/
+movie/qa/
+movie/cardtest/
+movie/screens/
+movie/tts_cache/
+movie/out/*.mp4
+movie/out/*.wav
+movie/out/*_list.txt
+movie/.venv/
+sim/new/
+sim/*.npz
+sim/tracks_before.json
+# environment-specific
+aws.env
+*.log
+__pycache__/
+*.pyc
+.claude/
+agent/audit_inject.jsonl
