@@ -121,3 +121,8 @@ Scoring: Impact 30%, Demo 25% (incl. video quality), Use of Meta AI tooling 25%,
 - Repo: private GitHub repo YuvarajAravindan-AI-Agent/6g-isac-facility-guard, 7 commits on main (latest b1c0058 at video time), repo-local git identity (not the IITM one). Pushed over HTTPS via gh credentials; SSH key is not linked to that account.
 - Cuts: out/6g-isac-judge.mp4 (6:26), out/6g-isac-long.mp4 (8:58, under LinkedIn's 10 min). Long cut dropped l1, l4, l8, l10, l11 to make room. Not posted anywhere.
 - GPU box stayed stopped for this round (CPU-only rework).
+
+## Posted (2026-10-17)
+- LinkedIn teaser POSTED by the user's request: https://www.linkedin.com/feed/update/urn:li:activity:7517255221149003776/ . Video = movie/out/6g-isac-teaser-9mb.mp4 (1:47, 1280x720, 8.5 MiB; the Chrome upload tool caps files at 10 MB; the 1080p 20.7 MiB version is out/6g-isac-teaser-lite.mp4). Text = movie/out/linkedin_post_teaser.md, no Meta hackathon line (application not submitted).
+- Judge cut hosted: https://ai-agentic-enterprises.com/6g-isac/watch/ (page) and /6g-isac/media/6g-isac-judge.mp4 (raw). site/media/ is git-ignored; redeploy with rsync WITHOUT --delete issues because media lives in site/.
+- Long cut (8:58) not posted anywhere.

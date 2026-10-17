@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>6G ISAC Facility Guard: walkthrough video</title>
+<meta name="description" content="6-minute walkthrough of the 6G ISAC drone-sensing simulation with a governed Llama agent: architecture, sequence and workflow diagrams, config and code snapshots, commit IDs, metrics and limits. Simulation only.">
+<style>
+:root{color-scheme:dark;--bg:#0a0f1d;--panel:#111a2e;--line:#24324f;--text:#dbe5f5;--mute:#8396b8;--cyan:#38bdf8;--amber:#fbbf24}
+body{margin:0;background:var(--bg);color:var(--text);font:16px/1.55 system-ui,-apple-system,Segoe UI,Roboto,sans-serif}
+main{max-width:1100px;margin:0 auto;padding:20px 16px 48px}
+h1{font-size:22px;margin:0 0 4px}.sim{display:inline-block;background:#3b2a05;color:var(--amber);border:1px solid #6b4e0a;border-radius:6px;padding:1px 8px;font-size:12px;font-weight:600;margin-left:8px;vertical-align:middle}
+p{color:var(--mute);margin:6px 0 14px}video{width:100%;border-radius:10px;border:1px solid var(--line);background:#000}
+ul{padding-left:20px;color:var(--text)}li{margin:3px 0}a{color:var(--cyan)}.box{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:12px 16px;margin-top:16px}
+</style></head><body><main>
+<h1>6G ISAC Facility Guard: walkthrough <span class="sim">SIMULATION</span></h1>
+<p>A simulated 6G base station senses a drone with its own communication signal; a governed Meta Llama agent proposes responses, a human approves, and a hash-chained log records everything. ISAC is not yet standardized by 3GPP.</p>
+<video controls preload="metadata" playsinline src="../media/6g-isac-judge.mp4"></video>
+<div class="box"><b>In this 6:26 video</b>
+<ul>
+<li>Architecture diagram, sequence diagram and approval workflow diagram</li>
+<li>Snapshots of the real configuration files and the real code (policy engine, audit chain, detector), with file names, line numbers and commit IDs</li>
+<li>Live range-Doppler sensing, detection and tracking metrics</li>
+<li>The governed agent, the human approval gate and the tamper-evident audit log</li>
+<li>Honest limits of the simulation</li>
+</ul>
+Captions are burned in. <a href="../media/captions-judge.srt">Caption file (SRT)</a> for players that need a separate track.</div>
+<div class="box"><b>Try it yourself:</b> <a href="../">interactive dashboard</a> (play the human approver; no login).</div>
+</main></body></html>

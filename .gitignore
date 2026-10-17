@@ -22,3 +22,4 @@ __pycache__/
 *.pyc
 .claude/
 agent/audit_inject.jsonl
+site/media/
