@@ -1,0 +1,42 @@
+{
+ "e9ee43caae5608850ad81ef3c44002b45283999bf13b770f1fd199f45b882020": {
+  "content": "{\n  \"classification\": \"unauthorized_drone\",\n  \"threat_level\": \"high\",\n  \"confidence\": 0.8,\n  \"rationale\": \"Unregistered drone detected outside the restricted zone, closing in on the critical zone.\",\n  \"recommended_actions\": [\n    {\n      \"action\": \"log_incident\",\n      \"reason\": \"Record the incident in the audit log.\"\n    },\n    {\n      \"action\": \"notify_security_desk\",\n      \"reason\": \"Raise an internal alert on the security desk dashboard.\"\n    },\n    {\n      \"action\": \"increase_sensing_rate\",\n      \"reason\": \"Raise the ISAC sensing update rate on this sector to track the drone's movement.\"\n    },\n    {\n      \"action\": \"cue_camera\",\n      \"reason\": \"Point the PTZ camera at the tracked position to visually confirm the drone's identity.\"\n    }\n  ]\n}",
+  "model": "llama3.1:8b",
+  "latency_s": 6.55
+ },
+ "07733b7a34fad68ca69ba648ac6d0679b7197ecace4bee2bae93df900d19c0ca": {
+  "content": "{\n  \"classification\": \"unauthorized_drone\",\n  \"threat_level\": \"high\",\n  \"confidence\": 0.8,\n  \"rationale\": \"Unregistered drone entering the restricted zone, closing on the critical zone.\",\n  \"recommended_actions\": [\n    {\n      \"action\": \"log_incident\",\n      \"reason\": \"Record the incident in the audit log.\"\n    },\n    {\n      \"action\": \"notify_security_desk\",\n      \"reason\": \"Raise an internal alert on the security desk dashboard.\"\n    },\n    {\n      \"action\": \"increase_sensing_rate\",\n      \"reason\": \"Raise the ISAC sensing update rate on this sector.\"\n    },\n    {\n      \"action\": \"cue_camera\",\n      \"reason\": \"Point the PTZ camera at the tracked position.\"\n    },\n    {\n      \"action\": \"dispatch_security_patrol\",\n      \"reason\": \"Send the on-site patrol to the predicted entry point.\"\n    }\n  ]\n}",
+  "model": "llama3.1:8b",
+  "latency_s": 5.1
+ },
+ "f00b9e5e1f027057d2dd47edfd0471a7ecd0ce47e9a0bdbe9749ce7813510fcf": {
+  "content": "{\n  \"classification\": \"unauthorized_drone\",\n  \"threat_level\": \"high\",\n  \"confidence\": 0.8,\n  \"rationale\": \"Unregistered drone entering restricted zone, no matching Remote ID, and closing on critical zone.\",\n  \"recommended_actions\": [\n    {\n      \"action\": \"log_incident\",\n      \"reason\": \"Record incident in audit log for future reference.\"\n    },\n    {\n      \"action\": \"notify_security_desk\",\n      \"reason\": \"Raise internal alert to security desk for immediate attention.\"\n    },\n    {\n      \"action\": \"increase_sensing_rate\",\n      \"reason\": \"Increase ISAC sensing update rate to track drone's movement.\"\n    },\n    {\n      \"action\": \"cue_camera\",\n      \"reason\": \"Point PTZ camera at tracked position for visual confirmation.\"\n    },\n    {\n      \"action\": \"dispatch_security_patrol\",\n      \"reason\": \"Send on-site patrol to predicted entry point for physical intervention.\"\n    }\n  ]\n}",
+  "model": "llama3.1:8b",
+  "latency_s": 7.08
+ },
+ "5eb69183e29b8cf27f2465cf030b28b14cfb15997ca598426266b622634740a3": {
+  "content": "{\n  \"classification\": \"unauthorized_drone\",\n  \"threat_level\": \"critical\",\n  \"confidence\": 0.9,\n  \"rationale\": \"Unregistered drone entering critical zone, closing on facility at 11.9 m/s.\",\n  \"recommended_actions\": [\n    {\n      \"action\": \"alert_airspace_authority\",\n      \"reason\": \"Notify airspace authority of unauthorized drone in critical zone.\"\n    },\n    {\n      \"action\": \"dispatch_security_patrol\",\n      \"reason\": \"Send on-site patrol to predicted entry point to contain the drone.\"\n    }\n  ]\n}",
+  "model": "llama3.1:8b",
+  "latency_s": 5.48
+ },
+ "afc1c8ecf4da5ef51677713cc3e7afe5dbff40fa96b63500ec748e4315800c1a": {
+  "content": "{\n  \"classification\": \"unauthorized_drone\",\n  \"threat_level\": \"high\",\n  \"confidence\": 0.9,\n  \"rationale\": \"Unregistered drone detected outside the restricted zone, closing in on the critical zone.\",\n  \"recommended_actions\": [\n    {\n      \"action\": \"log_incident\",\n      \"reason\": \"Record the incident in the audit log.\"\n    },\n    {\n      \"action\": \"notify_security_desk\",\n      \"reason\": \"Raise an internal alert on the security desk dashboard.\"\n    },\n    {\n      \"action\": \"increase_sensing_rate\",\n      \"reason\": \"Raise the ISAC sensing update rate on this sector to track the drone's movement.\"\n    },\n    {\n      \"action\": \"cue_camera\",\n      \"reason\": \"Point the PTZ camera at the tracked position to visually confirm the drone's identity.\"\n    }\n  ]\n}",
+  "model": "llama3.1:8b",
+  "latency_s": 4.95
+ },
+ "f60b3660bfd96fa6f895201519c042f3da46a3c3e9ad49f216226b826c1dfa97": {
+  "content": "{\n  \"classification\": \"unauthorized_drone\",\n  \"threat_level\": \"high\",\n  \"confidence\": 0.8,\n  \"rationale\": \"Unregistered drone entering the restricted zone, closing on the critical zone.\",\n  \"recommended_actions\": [\n    {\n      \"action\": \"log_incident\",\n      \"reason\": \"Record the incident in the audit log.\"\n    },\n    {\n      \"action\": \"notify_security_desk\",\n      \"reason\": \"Raise an internal alert on the security desk dashboard.\"\n    },\n    {\n      \"action\": \"increase_sensing_rate\",\n      \"reason\": \"Raise the ISAC sensing update rate on this sector.\"\n    },\n    {\n      \"action\": \"cue_camera\",\n      \"reason\": \"Point the PTZ camera at the tracked position.\"\n    },\n    {\n      \"action\": \"dispatch_security_patrol\",\n      \"reason\": \"Send the on-site patrol to the predicted entry point.\"\n    }\n  ]\n}",
+  "model": "llama3.1:8b",
+  "latency_s": 5.89
+ },
+ "38cbda4b2316986e8341ea81660e097e57d30c832fe118daedfbf63693689f2e": {
+  "content": "{\n  \"classification\": \"unauthorized_drone\",\n  \"threat_level\": \"high\",\n  \"confidence\": 0.9,\n  \"rationale\": \"Unregistered drone entering restricted zone, no matching Remote ID, and closing on critical zone.\",\n  \"recommended_actions\": [\n    {\n      \"action\": \"log_incident\",\n      \"reason\": \"Record the incident in the audit log.\"\n    },\n    {\n      \"action\": \"notify_security_desk\",\n      \"reason\": \"Raise an internal alert on the security desk dashboard.\"\n    },\n    {\n      \"action\": \"increase_sensing_rate\",\n      \"reason\": \"Raise the ISAC sensing update rate on this sector.\"\n    },\n    {\n      \"action\": \"cue_camera\",\n      \"reason\": \"Point the PTZ camera at the tracked position.\"\n    },\n    {\n      \"action\": \"dispatch_security_patrol\",\n      \"reason\": \"Send the on-site patrol to the predicted entry point.\"\n    }\n  ]\n}",
+  "model": "llama3.1:8b",
+  "latency_s": 5.58
+ },
+ "7bc1eb1d751096b8c302549083ecbb1f0120118f787f3e9d75056b76c202b007": {
+  "content": "{\n  \"classification\": \"unauthorized_drone\",\n  \"threat_level\": \"critical\",\n  \"confidence\": 0.9,\n  \"rationale\": \"Unregistered drone entering critical zone, closing on facility at 11.9 m/s.\",\n  \"recommended_actions\": [\n    {\n      \"action\": \"alert_airspace_authority\",\n      \"reason\": \"Notify airspace authority of unauthorized drone in critical zone.\"\n    },\n    {\n      \"action\": \"dispatch_security_patrol\",\n      \"reason\": \"Send on-site patrol to predicted entry point to intercept drone.\"\n    }\n  ]\n}",
+  "model": "llama3.1:8b",
+  "latency_s": 4.11
+ }
+}

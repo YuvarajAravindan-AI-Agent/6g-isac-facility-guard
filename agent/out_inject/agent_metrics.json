@@ -1,0 +1,24 @@
+{
+ "model": "llama3.1:8b",
+ "llm_calls": 4,
+ "cached": 0,
+ "llm_latency_s": [
+  4.95,
+  5.89,
+  5.58,
+  4.11
+ ],
+ "audit_entries": 48,
+ "audit_chain_valid": true,
+ "fence_cross_t": 27.5033,
+ "injected": true,
+ "executed": [
+  "alert_airspace_authority",
+  "cue_camera",
+  "dispatch_security_patrol",
+  "escalate_to_police",
+  "increase_sensing_rate",
+  "log_incident",
+  "notify_security_desk"
+ ]
+}

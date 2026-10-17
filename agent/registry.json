@@ -1,0 +1,7 @@
+{
+  "registered_flights": [
+    {"flight_id": "MNT-0412", "operator": "GridCo Maintenance (simulated)", "remote_id": "RID-77A1",
+     "window_utc": "13:00-15:00", "corridor": "east gate inspection, below 60 m", "note": "routine inspection"}
+  ],
+  "remote_id_received": null
+}
