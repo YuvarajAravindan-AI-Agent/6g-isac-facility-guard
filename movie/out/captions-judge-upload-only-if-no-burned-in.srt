@@ -1,0 +1,479 @@
+1
+00:00:00,200 --> 00:00:03,350
+A drone slips toward a power substation at dusk.
+
+2
+00:00:03,350 --> 00:00:04,622
+No radar sees it.
+
+3
+00:00:04,622 --> 00:00:06,197
+No camera sees it yet.
+
+4
+00:00:06,197 --> 00:00:09,771
+But the six-G base station beside the fence does, using
+
+5
+00:00:09,771 --> 00:00:12,860
+nothing but the signal it already uses to talk.
+
+6
+00:00:13,660 --> 00:00:15,920
+Critical sites have a blind spot:
+
+7
+00:00:15,920 --> 00:00:17,691
+small, low-flying drones.
+
+8
+00:00:17,691 --> 00:00:19,706
+Six-G proposes something new.
+
+9
+00:00:19,706 --> 00:00:24,958
+Integrated sensing and communication, where the network itself becomes the sensor.
+
+10
+00:00:24,958 --> 00:00:28,012
+It is not standardized yet, so we simulate it,
+
+11
+00:00:28,012 --> 00:00:31,920
+because real hardware tests are costly or simply impossible.
+
+12
+00:00:32,720 --> 00:00:34,530
+Here is how it is built.
+
+13
+00:00:34,530 --> 00:00:38,278
+A ray-tracing model of the substation runs at thirteen
+
+14
+00:00:38,278 --> 00:00:42,156
+gigahertz, with a four-hundred-megahertz O F D M signal.
+
+15
+00:00:42,156 --> 00:00:46,744
+Sionna computes the clutter from buildings, transformers and fence.
+
+16
+00:00:46,744 --> 00:00:49,523
+The drone is a moving point target of a
+
+17
+00:00:49,523 --> 00:00:53,659
+hundred square centimetres, flying twelve metres per second.
+
+18
+00:00:53,659 --> 00:00:57,020
+The whole simulation runs on one AWS L four GPU.
+
+19
+00:00:57,820 --> 00:00:59,313
+Here is the sequence.
+
+20
+00:00:59,313 --> 00:01:02,717
+The base station's echo goes to the sensing pipeline.
+
+21
+00:01:02,717 --> 00:01:04,688
+Detections go to the tracker.
+
+22
+00:01:04,688 --> 00:01:08,092
+A confirmed track goes to the evidence tools, and the
+
+23
+00:01:08,092 --> 00:01:11,615
+evidence, the rules and the action catalog go to Llama.
+
+24
+00:01:11,615 --> 00:01:14,183
+Its proposal goes to the policy engine,
+
+25
+00:01:14,183 --> 00:01:16,154
+then to a human for approval.
+
+26
+00:01:16,154 --> 00:01:19,200
+Every message is also written to the audit log.
+
+27
+00:01:20,000 --> 00:01:24,657
+The base station removes the static clutter and forms a range-Doppler map.
+
+28
+00:01:24,657 --> 00:01:27,881
+A C F A R detector flags anything above the noise.
+
+29
+00:01:27,881 --> 00:01:31,285
+A sixteen by eight antenna panel estimates direction,
+
+30
+00:01:31,285 --> 00:01:33,852
+and a Kalman tracker follows the drone.
+
+31
+00:01:33,852 --> 00:01:37,076
+The track is confirmed at three hundred twenty-one
+
+32
+00:01:37,076 --> 00:01:40,420
+metres, about twenty-seven seconds before the fence.
+
+33
+00:01:41,220 --> 00:01:42,726
+The detector is short.
+
+34
+00:01:42,726 --> 00:01:45,970
+A box filter estimates the local noise from training
+
+35
+00:01:45,970 --> 00:01:49,156
+cells, leaving out the guard cells, and a threshold
+
+36
+00:01:49,156 --> 00:01:52,516
+factor derived from the false-alarm target is applied.
+
+37
+00:01:52,516 --> 00:01:55,760
+It runs on the GPU over two million cells per frame.
+
+38
+00:01:56,560 --> 00:01:59,474
+Across twenty simulated flights, position error is
+
+39
+00:01:59,474 --> 00:02:01,795
+sixty-four centimetres R M S, and speed
+
+40
+00:02:01,795 --> 00:02:03,954
+error is under one metre per second.
+
+41
+00:02:03,954 --> 00:02:07,624
+A target ten times smaller is still confirmed at the same range.
+
+42
+00:02:07,624 --> 00:02:11,078
+At three hundred metres, the smallest target detected ninety
+
+43
+00:02:11,078 --> 00:02:14,100
+percent of the time is about ten square centimetres.
+
+44
+00:02:14,900 --> 00:02:16,541
+Now the governed agent.
+
+45
+00:02:16,541 --> 00:02:21,039
+When the track is confirmed, deterministic tools compute the evidence:
+
+46
+00:02:21,039 --> 00:02:25,841
+distance, zone, time to the fence, and whether a registered flight matches.
+
+47
+00:02:25,841 --> 00:02:30,461
+Then Meta's Llama three point one proposes actions from a fixed catalog.
+
+48
+00:02:30,461 --> 00:02:31,920
+It never acts alone.
+
+49
+00:02:32,720 --> 00:02:35,337
+These are the real configuration files.
+
+50
+00:02:35,337 --> 00:02:39,964
+The policy file defines the zones, the actions, and which need approval.
+
+51
+00:02:39,964 --> 00:02:43,555
+The radio settings fix thirteen gigahertz, four hundred
+
+52
+00:02:43,555 --> 00:02:46,781
+megahertz and a hundred square centimetre target.
+
+53
+00:02:46,781 --> 00:02:49,399
+Deployment is one AWS L four box, Llama
+
+54
+00:02:49,399 --> 00:02:52,199
+three point one at temperature zero with a
+
+55
+00:02:52,199 --> 00:02:55,060
+fixed seed, and a static page behind Caddy.
+
+56
+00:02:55,860 --> 00:02:58,280
+A policy engine checks every proposal.
+
+57
+00:02:58,280 --> 00:03:00,816
+It raises the threat level to the policy
+
+58
+00:03:00,816 --> 00:03:03,698
+floor, adds the minimum actions for each zone,
+
+59
+00:03:03,698 --> 00:03:06,233
+and blocks anything outside the catalog.
+
+60
+00:03:06,233 --> 00:03:08,078
+Jamming is never executable.
+
+61
+00:03:08,078 --> 00:03:11,478
+Actions that touch the physical world wait for a human.
+
+62
+00:03:11,478 --> 00:03:15,800
+The duty officer approves the camera in three seconds, then the patrol.
+
+63
+00:03:16,600 --> 00:03:19,379
+And the workflow for each proposed action.
+
+64
+00:03:19,379 --> 00:03:21,191
+The policy engine decides.
+
+65
+00:03:21,191 --> 00:03:24,151
+Internal, reversible steps run automatically.
+
+66
+00:03:24,151 --> 00:03:27,595
+Jamming, or anything outside the catalog, is blocked.
+
+67
+00:03:27,595 --> 00:03:30,736
+Everything else waits for a human, who approves,
+
+68
+00:03:30,736 --> 00:03:33,878
+rejects, or lets it expire after twenty seconds.
+
+69
+00:03:33,878 --> 00:03:37,140
+Only approved actions run, and only in simulation.
+
+70
+00:03:37,940 --> 00:03:42,176
+The security manager rejects an early police escalation, and approves
+
+71
+00:03:42,176 --> 00:03:44,787
+it only when the drone is over the fence.
+
+72
+00:03:44,787 --> 00:03:47,920
+The dashboard lets you play the operator yourself.
+
+73
+00:03:48,720 --> 00:03:51,055
+This is the policy engine in code.
+
+74
+00:03:51,055 --> 00:03:53,697
+If the drone is unregistered and in the
+
+75
+00:03:53,697 --> 00:03:56,769
+restricted zone, the threat level is raised to
+
+76
+00:03:56,769 --> 00:03:59,411
+at least high, whatever the model said.
+
+77
+00:03:59,411 --> 00:04:03,220
+Actions outside the catalog, such as jamming, are blocked.
+
+78
+00:04:04,020 --> 00:04:07,219
+Every step goes into a hash-chained audit log.
+
+79
+00:04:07,219 --> 00:04:09,969
+Change one entry, and the chain breaks.
+
+80
+00:04:09,969 --> 00:04:13,040
+You can verify it yourself, in your browser.
+
+81
+00:04:13,840 --> 00:04:15,183
+And the audit log.
+
+82
+00:04:15,183 --> 00:04:18,418
+Each entry stores the hash of the previous entry,
+
+83
+00:04:18,418 --> 00:04:21,592
+so changing any line breaks every hash after it.
+
+84
+00:04:21,592 --> 00:04:25,377
+The dashboard recomputes these hashes in your browser, and
+
+85
+00:04:25,377 --> 00:04:29,100
+the self-test confirms that a tampered entry is detected.
+
+86
+00:04:29,900 --> 00:04:30,889
+Honest limits.
+
+87
+00:04:30,889 --> 00:04:34,408
+At closest approach the drone moves sideways, falls into the
+
+88
+00:04:34,408 --> 00:04:37,706
+Doppler blind zone, and the track coasts for two frames.
+
+89
+00:04:37,706 --> 00:04:41,224
+A hovering drone would be invisible to this clutter removal.
+
+90
+00:04:41,224 --> 00:04:43,697
+And human approval delay eats most of the
+
+91
+00:04:43,697 --> 00:04:46,006
+lead time late in the flight, which is
+
+92
+00:04:46,006 --> 00:04:48,040
+why the agent must propose early.
+
+93
+00:04:48,840 --> 00:04:52,700
+Everything is in version control, one commit per stage, from
+
+94
+00:04:52,700 --> 00:04:56,078
+the radio simulation to the dashboard and this film.
+
+95
+00:04:56,078 --> 00:04:59,938
+The code is in a private repository, with access on request.
+
+96
+00:04:59,938 --> 00:05:03,979
+The self-test passes all six checks, and replaying the recorded
+
+97
+00:05:03,979 --> 00:05:07,900
+Llama answers reproduces the same event sequence with no GPU.
+
+98
+00:05:08,700 --> 00:05:11,066
+The stack is deliberately simple.
+
+99
+00:05:11,066 --> 00:05:15,031
+Sionna and PyTorch simulate the radio on a single AWS GPU.
+
+100
+00:05:15,031 --> 00:05:19,635
+Meta's Llama three point one, eight billion parameters, runs locally
+
+101
+00:05:19,635 --> 00:05:23,215
+through Ollama, so no incident data leaves the site.
+
+102
+00:05:23,215 --> 00:05:26,541
+A policy engine and an audit log wrap the model.
+
+103
+00:05:26,541 --> 00:05:29,098
+Two simplifications, stated plainly:
+
+104
+00:05:29,098 --> 00:05:31,400
+the drone is a point target, and
+
+105
+00:05:31,400 --> 00:05:34,022
+the angle estimate is modelled at the
+
+106
+00:05:34,022 --> 00:05:37,028
+detected cell, not a full array simulation.
+
+107
+00:05:37,028 --> 00:05:41,120
+The public demo is a static page that replays recorded runs.
+
+108
+00:05:41,920 --> 00:05:43,093
+Why it matters.
+
+109
+00:05:43,093 --> 00:05:46,181
+Substations, ports and airports are regulated.
+
+110
+00:05:46,181 --> 00:05:48,774
+They answer to aviation rules, such as
+
+111
+00:05:48,774 --> 00:05:50,935
+Remote I D, and to privacy law,
+
+112
+00:05:50,935 --> 00:05:53,775
+because sensing data can be personal data.
+
+113
+00:05:53,775 --> 00:05:57,110
+A system that proposes, a human that approves, and
+
+114
+00:05:57,110 --> 00:05:59,827
+a log that proves what happened is how A
+
+115
+00:05:59,827 --> 00:06:02,420
+I earns a place in these environments.
+
+116
+00:06:03,220 --> 00:06:08,631
+Governed, auditable A I on a sensing network that is already deployed.
+
+117
+00:06:08,631 --> 00:06:10,678
+That is the opportunity:
+
+118
+00:06:10,678 --> 00:06:15,431
+protecting substations, ports and airports without new radar.
+
+119
+00:06:15,431 --> 00:06:19,964
+Try it at ai-agentic-enterprises dot com slash six-g-isac.
+
+120
+00:06:19,964 --> 00:06:25,960
+I am Yuvaraj Aravindan, building governed A I agents for regulated industries.
